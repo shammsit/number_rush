@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Number Rush Game</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: white;
+    }
+
+    .game-container {
+        text-align: center;
+        background: rgba(255,255,255,0.1);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        backdrop-filter: blur(10px);
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    #timer {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 70px);
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn {
+        width: 70px;
+        height: 70px;
+        font-size: 22px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        background: #ffffff;
+        color: #333;
+        transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: scale(1.1);
+        background: #ffd369;
+    }
+
+    .correct {
+        background: #00c853 !important;
+        color: white;
+        cursor: default;
+    }
+
+    .game-over {
+        margin-top: 15px;
+        font-size: 22px;
+        color: #ff5252;
+    }
+
+    .win {
+        color: #00e676;
+    }
+
+    button.restart {
+        margin-top: 15px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        background: #ff9800;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+    <h1>⚡ Number Rush</h1>
+    <div id="timer">Time: 20</div>
+    <div class="grid" id="grid"></div>
+    <div id="message"></div>
+    <button class="restart" onclick="startGame()">Restart</button>
+</div>
+
+<script>
+let numbers = [];
+let current = 0;
+let timeLeft = 20;
+let timer;
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function createGrid() {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    numbers.forEach(num => {
+        const btn = document.createElement("button");
+        btn.innerText = num;
+        btn.classList.add("btn");
+
+        btn.onclick = () => handleClick(btn, num);
+
+        grid.appendChild(btn);
+    });
+}
+
+function handleClick(btn, num) {
+    if (num === current) {
+        btn.classList.add("correct");
+        btn.disabled = true;
+        current++;
+
+        if (current === 10) {
+            winGame();
+            return;
+        }
+
+        // Shuffle remaining buttons except correct ones
+        let remaining = numbers.filter(n => n >= current);
+        let completed = numbers.filter(n => n < current);
+
+        remaining = shuffle(remaining);
+        numbers = [...completed, ...remaining];
+
+        createGrid();
+    } else {
+        gameOver("Wrong selection!");
+    }
+}
+
+function startGame() {
+    numbers = shuffle([...Array(10).keys()]);
+    current = 0;
+    timeLeft = 20;
+
+    document.getElementById("message").innerHTML = "";
+
+    createGrid();
+
+    clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+        if (timeLeft <= 0) {
+            gameOver("Time's up!");
+        }
+    }, 1000);
+}
+
+function gameOver(msg) {
+    clearInterval(timer);
+    document.getElementById("message").innerHTML =
+        `<div class="game-over">❌ ${msg}</div>`;
+}
+
+function winGame() {
+    clearInterval(timer);
+    document.getElementById("message").innerHTML =
+        `<div class="game-over win">🎉 You Win!</div>`;
+}
+
+// Start game on load
+startGame();
+</script>
+
+</body>
+</html>
