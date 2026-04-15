@@ -90,7 +90,7 @@
 
 <div class="game-container">
     <h1>⚡ Number Rush</h1>
-    <div id="timer">Time: 20</div>
+    <div id="timer">Time: 15</div>
     <div class="grid" id="grid"></div>
     <div id="message"></div>
     <button class="restart" onclick="startGame()">Restart</button>
@@ -99,7 +99,7 @@
 <script>
 let numbers = [];
 let current = 0;
-let timeLeft = 20;
+let timeLeft = 15;
 let timer;
 
 function shuffle(array) {
@@ -148,7 +148,7 @@ function handleClick(btn, num) {
 function startGame() {
     numbers = shuffle([...Array(10).keys()]);
     current = 0;
-    timeLeft = 20;
+    timeLeft = 15;
 
     document.getElementById("message").innerHTML = "";
 
